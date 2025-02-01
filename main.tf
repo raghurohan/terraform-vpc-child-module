@@ -58,6 +58,7 @@ resource "aws_db_subnet_group" "default" {
 resource "aws_eip" "nat" {
   vpc = true
 }
+}
 
 # NAT gateway : one interesting fact about nat gateway is , it has to be placed in PUBLIC subnets to provide secure internet 
 # connection for private and database subnets. why becuase nat gateway access internet gateway and igw is in public subnet;
