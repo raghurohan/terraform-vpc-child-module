@@ -5,10 +5,7 @@ resource "aws_vpc_peering_connection" "peering" {
   
   auto_accept   = true
 
-  tags = 
-    {
-        Name = "${var.vpc_name}-default"
-    }
+  
 }
 
 
