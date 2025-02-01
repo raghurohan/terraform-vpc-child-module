@@ -25,7 +25,7 @@ resource "aws_subnet" "public" {
   availability_zones = local.availability_zones
   map_public_ip_on_launch = true
   tags = {
-    Name = public-${var.vpc_name}
+    Name = "public-${var.vpc_name}"
   }
 }
 
@@ -35,7 +35,7 @@ resource "aws_subnet" "private" {
   cidr_blocks = var.private_cidr[count.index]
   availability_zones = local.availability_zones
   tags = {
-    Name = private-${var.vpc_name}
+    Name = "private-${var.vpc_name}"
   }
 }
 
@@ -45,14 +45,14 @@ resource "aws_subnet" "database" {
   cidr_blocks = var.database_cidr[count.index]
   availability_zones = local.availability_zones
   tags = {
-    Name = database-${var.vpc_name}
+    Name = "database-${var.vpc_name}"
   }
 }
 
 resource "aws_db_subnet_group" "default" {
   subnet_id = aws_subnet.database[*].id
   tags = {
-    Name = ${var.vpc_name}-dev
+    Name = "${var.vpc_name}-dev"
   }
 
 resource "aws_eip" "nat" {
@@ -67,7 +67,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id = aws_subnet.public[0].id
   allocation_id =  aws_eip.nat.id
   tags = {
-    Name = ${var.vpc_name}-dev
+    Name = "${var.vpc_name}-dev"
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -87,7 +87,7 @@ vpc_id = aws_vpc.main.id
   }
 
   tags = {
-    Name = ${var.vpc_name}-dev-public
+    Name = "${var.vpc_name}-dev-public"
   }
 }
 
@@ -102,7 +102,7 @@ vpc_id = aws_vpc.main.id
   }
 
   tags = {
-    Name = ${var.vpc_name}-dev-private
+    Name = "${var.vpc_name}-dev-private"
   }
 }
 
@@ -117,7 +117,7 @@ vpc_id = aws_vpc.main.id
   }
 
   tags = {
-    Name = ${var.vpc_name}-dev-database
+    Name = "${var.vpc_name}-dev-database"
   }
 }
 
