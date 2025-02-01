@@ -13,3 +13,7 @@ output "public_subnet" {
 output "nat" {
     value = aws_nat_gateway.main.id
 }
+
+output "eip" {
+    value = aws_eip.nat.id
+}
