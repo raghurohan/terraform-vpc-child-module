@@ -21,7 +21,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "public" {
   count = length(var.public_cidr)
   vpc_id = aws_vpc.main.id
-  cidr_blocks = var.public_cidr[count.index]
+  cidr_block = var.public_cidr[count.index]
   availability_zones = local.availability_zones
   map_public_ip_on_launch = true
   tags = {
@@ -32,7 +32,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count = length(var.private_cidr)
   vpc_id = aws_vpc.main.id
-  cidr_blocks = var.private_cidr[count.index]
+  cidr_block = var.private_cidr[count.index]
   availability_zones = local.availability_zones
   tags = {
     Name = "private-${var.vpc_name}"
@@ -42,7 +42,7 @@ resource "aws_subnet" "private" {
 resource "aws_subnet" "database" {
   count = length(var.databse_cidr)
   vpc_id = aws_vpc.main.id
-  cidr_blocks = var.database_cidr[count.index]
+  cidr_block = var.database_cidr[count.index]
   availability_zones = local.availability_zones
   tags = {
     Name = "database-${var.vpc_name}"
