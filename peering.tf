@@ -5,13 +5,10 @@ resource "aws_vpc_peering_connection" "peering" {
   
   auto_accept   = true
 
-  tags = merge(
-    var.common_tags,
-    var.vpc_peering_tags,
+  tags = 
     {
-        Name = "${local.resource_name}-default"
+        Name = "${var.vpc_name}-default"
     }
-  )
 }
 
 
