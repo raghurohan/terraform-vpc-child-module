@@ -18,7 +18,7 @@ output "database_subnet" {
     value = aws_subnet.database[*].id
 }
 output "database_subnet_group" {
-    value = aws_db_subnet_group.main.name
+    value = aws_db_subnet_group.default.name
 }
 
 output "nat" {
