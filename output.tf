@@ -10,6 +10,17 @@ output "public_subnet" {
     value = aws_subnet.public[*].id
 }
 
+output "private_subnet" {
+    value = aws_subnet.private[*].id
+}
+
+output "database_subnet" {
+    value = aws_subnet.database[*].id
+}
+output "database_subnet_group" {
+    value = aws_db_subnet_group.main.name
+}
+
 output "nat" {
     value = aws_nat_gateway.main.id
 }
