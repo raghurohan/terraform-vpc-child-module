@@ -124,6 +124,7 @@ vpc_id = aws_vpc.main.id
 }
 
 ###################################
+# route association is used to associate route table with subnet
   resource "aws_route_table_association" "public" {
   count = length(var.public_cidr)
   subnet_id      = aws_subnet.public[count.index].id
