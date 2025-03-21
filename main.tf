@@ -2,7 +2,7 @@
 
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
-  enable_dns_hostnames = true
+  enable_dns_hostnames = true # if not enabled, we can't resolve dns names
   tags = {
     Name = var.vpc_name
   }
@@ -87,7 +87,7 @@ vpc_id = aws_vpc.main.id
 
   route {
   cidr_block    = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.igw.id
+  gateway_id = aws_internet_gateway.igw.id # by route table defination ; public subnet should have route to igw
   }
 
   tags = {
@@ -100,8 +100,8 @@ resource "aws_route_table" "private" {
 vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block    = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
+    cidr_block    = "0.0.0.0/0" 
+    nat_gateway_id = aws_nat_gateway.main.id # by route table defination ; private subnet should have route to nat gateway
   }
 
   tags = {
@@ -124,7 +124,7 @@ vpc_id = aws_vpc.main.id
 }
 
 ###################################
-# route association is used to associate route table with subnet
+# route association is used to associate route table with subnet ; public subnet should have public route table  
   resource "aws_route_table_association" "public" {
   count = length(var.public_cidr)
   subnet_id      = aws_subnet.public[count.index].id

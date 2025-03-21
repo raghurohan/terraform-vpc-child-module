@@ -32,7 +32,7 @@ variable "private_cidr" {
 
 variable "database_cidr" {
  validation {
-        condition = length(var.database_cidr) == 2
+        condition = length(var.database_cidr) == 2 
         error_message = "must give 2 database subnets"
     }
 }
