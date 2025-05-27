@@ -1,6 +1,4 @@
-output "az_info" {
-    value = data.aws_availability_zones.available.names
-}
+# The values you are exposing from this vpc source are used when creating ec2 or may be rds or vpn etc. these values are not for VPC module; vpc module dont need this 
 
 output "vpc" {
     value = aws_vpc.main.id
@@ -27,4 +25,8 @@ output "nat" {
 
 output "eip" {
     value = aws_eip.nat.id
+}
+
+output "az_info" {
+    value = data.aws_availability_zones.available.names
 }

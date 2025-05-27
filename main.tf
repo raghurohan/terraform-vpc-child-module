@@ -18,6 +18,7 @@ resource "aws_internet_gateway" "igw" {
 
 }
 
+# here we are creating 2 subnets high availability; if one public subnet fails , we have other public subnet. but subnet wont fail.then what fails ? availability zone will be down at times; so we are creating 2 public subnets in two AZ's. if one AZ is down , another will be up. 
 resource "aws_subnet" "public" {
   count = length(var.public_cidr)
   vpc_id = aws_vpc.main.id
@@ -50,6 +51,8 @@ resource "aws_subnet" "database" {
   }
 }
 
+
+#THIS IS MANDATORY FOR RDS CREATION; CHECK RDS MODULE, IT ASKS FOR DATABASE SUBNET GROUP
 resource "aws_db_subnet_group" "default" {
   subnet_ids = aws_subnet.database[*].id
   tags = {
@@ -69,7 +72,7 @@ resource "aws_eip" "nat" {
 # connection for private and database subnets. why becuase nat gateway access internet gateway and igw is in public subnet;
 # nat gateway has to created only after interet gateway is created . so we should explicitely mention that. 
 resource "aws_nat_gateway" "main" {
-  subnet_id = aws_subnet.public[0].id
+  subnet_id = aws_subnet.public[0].id #in any one of public subnet. cost optimisation
   allocation_id =  aws_eip.nat.id
   tags = {
     Name = "${var.vpc_name}-dev"
@@ -81,13 +84,20 @@ resource "aws_nat_gateway" "main" {
 
 
 #route table and its route 
+# Route tables define where outbound traffic goes—i.e., how traffic leaves the VPC and where it goes (through anb Internet Gateway, NAT Gateway, etc.).
 
+# Inbound traffic is not controlled by route tables. It's handled by things like:
+# Security Groups: NACL etc.
+
+#=======================================
+
+# cidr_block    = "0.0.0.0/0" #Outbound traffic which tells " if someone reaches me , at any cost you give the response back to whoever is reached me; how to reach him is through IGW"
 resource "aws_route_table" "public" {
 vpc_id = aws_vpc.main.id
 
   route {
-  cidr_block    = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.igw.id # by route table defination ; public subnet should have route to igw
+    cidr_block    = "0.0.0.0/0" 
+    gateway_id = aws_internet_gateway.igw.id # by route table defination ; public subnet should have route to igw
   }
 
   tags = {
@@ -95,7 +105,8 @@ vpc_id = aws_vpc.main.id
   }
 }
 
-#############################
+
+#cidr_block    = "0.0.0.0/0" here it means talk to internet when required and download packages like nodejs , mysql etc.
 resource "aws_route_table" "private" {
 vpc_id = aws_vpc.main.id
 
@@ -109,7 +120,7 @@ vpc_id = aws_vpc.main.id
   }
 }
 
-#############################
+
 resource "aws_route_table" "database" {
 vpc_id = aws_vpc.main.id
 
@@ -124,7 +135,10 @@ vpc_id = aws_vpc.main.id
 }
 
 ###################################
-# route association is used to associate route table with subnet ; public subnet should have public route table  
+# route association is used to associate route table with subnet ; 
+
+#WHY ?
+# if some hit public subnet ip , its goes to backend according to server defination(example: nginx.conf). data comes back from backend to frontend;  frontend is in public subnet.from there , to reach the user , how ?  we need route table which is also associated with IGW 
   resource "aws_route_table_association" "public" {
   count = length(var.public_cidr)
   subnet_id      = aws_subnet.public[count.index].id
