@@ -8,4 +8,4 @@ locals  {
 
 # data.aws_availability_zones.available.names = list of all AZs (like ["us-east-1a", "us-east-1b", "us-east-1c", ...])
 
-# slice(..., 0, 2) = picks index 0 and 1, i.e., first two AZs.
+# slice(..., 0, 2) = picks index 0 and 1, i.e., first two AZs....
