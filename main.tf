@@ -1,4 +1,5 @@
 # creating a vpc root module
+# since private subnets can be used to create db also , we are commenting out db subnets which was n use before
 
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
@@ -41,20 +42,20 @@ resource "aws_subnet" "private" {
   }
 }
 
-resource "aws_subnet" "database" {
-  count = length(var.database_cidr)
-  vpc_id = aws_vpc.main.id
-  cidr_block = var.database_cidr[count.index]
-  availability_zone = local.availability_zones[count.index]
-  tags = {
-    Name = "database-${var.vpc_name}"
-  }
-}
+#resource "aws_subnet" "database" {
+#  count = length(var.database_cidr)
+#  vpc_id = aws_vpc.main.id
+#  cidr_block = var.database_cidr[count.index]
+#  availability_zone = local.availability_zones[count.index]
+#  tags = {
+#    Name = "database-${var.vpc_name}"
+#  }
+#}
 
 
 #THIS IS MANDATORY FOR RDS CREATION; CHECK RDS MODULE, IT ASKS FOR DATABASE SUBNET GROUP
 resource "aws_db_subnet_group" "default" {
-  subnet_ids = aws_subnet.database[*].id
+  subnet_ids = aws_subnet.private[*].id
   tags = {
     Name = "${var.vpc_name}-dev"
   }
@@ -121,18 +122,18 @@ vpc_id = aws_vpc.main.id
 }
 
 
-resource "aws_route_table" "database" {
-vpc_id = aws_vpc.main.id
-
-   route {
-    cidr_block    = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
-  }
-
-  tags = {
-    Name = "${var.vpc_name}-dev-database"
-  }
-}
+#resource "aws_route_table" "database" {
+#vpc_id = aws_vpc.main.id
+#
+#   route {
+#    cidr_block    = "0.0.0.0/0"
+#    nat_gateway_id = aws_nat_gateway.main.id
+#  }
+#
+#  tags = {
+#    Name = "${var.vpc_name}-dev-database"
+#  }
+#}
 
 ###################################
 # route association is used to associate route table with subnet ; 
@@ -153,8 +154,8 @@ vpc_id = aws_vpc.main.id
 }
 
 ###################################
-  resource "aws_route_table_association" "database" {
-  count = length(var.database_cidr)
-  subnet_id      = aws_subnet.database[count.index].id
-  route_table_id = aws_route_table.database.id
-}
+#  resource "aws_route_table_association" "database" {
+#  count = length(var.database_cidr)
+#  subnet_id      = aws_subnet.database[count.index].id
+#  route_table_id = aws_route_table.database.id
+#}
