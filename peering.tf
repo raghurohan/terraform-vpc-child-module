@@ -35,17 +35,17 @@ resource "aws_route" "default_peering" { #from default vpc to our custom vpc con
 ########## here i am trying something new , adding data source block also here and also variable block required 
 # for peering connection
 
-data "aws_vpc" "default" { # to get default vpc details where we need vpc id
-  default = true
-}
+# data "aws_vpc" "default" { # to get default vpc details where we need vpc id
+#   default = true
+# }
 
-data "aws_route_table" "main"{  # to get default or main route table id of default vpc
-  vpc_id = data.aws_vpc.default.id
-  filter {
-    name = "association.main"
-    values = ["true"]
-  }
-}
+# data "aws_route_table" "main"{  # to get default or main route table id of default vpc
+#   vpc_id = data.aws_vpc.default.id
+#   filter {
+#     name = "association.main"
+#     values = ["true"]
+#   }
+# }
 
 variable "is_peering_required" {
   description = "Flag to enable/disable peering connection"
